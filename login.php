@@ -78,10 +78,6 @@ require_once 'includes/header.php';
             <div class="text-center mt-4" style="font-size:13px;color:var(--mid-grey);">
                 <p class="mb-1">Demo: <strong>jane@example.com</strong> / <strong>Admin@1234</strong></p>
             </div>
-
-            <p class="text-center mt-3 mb-0" style="font-size:14px;">
-                Don't have an account? <a href="register.php" class="fw-600" style="color:var(--pink);">Create one free</a>
-            </p>
         </div>
     </div>
 </div>
