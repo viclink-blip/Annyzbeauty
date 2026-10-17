@@ -1,11 +1,6 @@
 <?php
-require_once '../includes/config.php';
+require_once '../includes/shop.php';
 header('Content-Type: application/json');
-
-if (!isLoggedIn()) {
-    echo json_encode(['success'=>false,'redirect'=> SITE_URL.'/login.php']);
-    exit;
-}
 
 $productId = intval($_POST['product_id'] ?? 0);
 $quantity  = max(1, intval($_POST['quantity'] ?? 1));
@@ -31,23 +26,7 @@ if ($product['stock_quantity'] < $quantity) {
     exit;
 }
 
-$uid = $_SESSION['user_id'];
+$inCart = cartQuantities()[$productId] ?? 0;
+cartSet($productId, min($inCart + $quantity, (int)$product['stock_quantity']));
 
-// Insert or update cart
-$check = $pdo->prepare("SELECT id, quantity FROM cart WHERE user_id=? AND product_id=?");
-$check->execute([$uid, $productId]);
-$existing = $check->fetch();
-
-if ($existing) {
-    $newQty = min($existing['quantity'] + $quantity, $product['stock_quantity']);
-    $pdo->prepare("UPDATE cart SET quantity=? WHERE id=?")->execute([$newQty, $existing['id']]);
-} else {
-    $pdo->prepare("INSERT INTO cart (user_id, product_id, quantity) VALUES (?,?,?)")->execute([$uid, $productId, $quantity]);
-}
-
-// Get new cart count
-$count = $pdo->prepare("SELECT COALESCE(SUM(quantity),0) FROM cart WHERE user_id=?");
-$count->execute([$uid]);
-$cartCount = (int) $count->fetchColumn();
-
-echo json_encode(['success'=>true,'cart_count'=>$cartCount,'message'=>'Added to cart!']);
+echo json_encode(['success'=>true,'cart_count'=>cartCount(),'message'=>'Added to cart!']);

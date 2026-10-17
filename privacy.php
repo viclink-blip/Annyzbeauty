@@ -10,11 +10,11 @@ in line with Kenya's Data Protection Act, 2019.</p>
 
 <h2>1. Information we collect</h2>
 <ul>
-    <li><strong>Account details:</strong> your name, email address, phone number and password (stored only in encrypted form).</li>
-    <li><strong>Order details:</strong> delivery address, city, the products you buy and any notes you add.</li>
+    <li><strong>Checkout details:</strong> your name, phone number, email address, delivery address and city, the products you buy and any notes you add.</li>
+    <li><strong>Saved details (optional):</strong> if you choose to save your details at checkout, we keep them with a password stored only in encrypted form.</li>
     <li><strong>Payment details:</strong> payments are handled by Paystack. We receive confirmation that you paid, the amount and a transaction reference. We do not receive or store your card number or M-Pesa PIN.</li>
     <li><strong>WhatsApp messages:</strong> if you order or ask for help on WhatsApp, we keep the conversation to complete your order.</li>
-    <li><strong>Technical data:</strong> a session cookie that keeps you signed in and remembers your cart.</li>
+    <li><strong>Cookies:</strong> a session cookie that remembers your cart, and, if you save your details, a cookie that remembers your device for one year. "Not you? Sign out" removes it.</li>
 </ul>
 
 <h2>2. How we use it</h2>
@@ -36,12 +36,11 @@ in line with Kenya's Data Protection Act, 2019.</p>
 <p>We do not sell your personal information.</p>
 
 <h2>4. How long we keep it</h2>
-<p>We keep account and order records for as long as your account is open and for as long as tax and accounting laws require afterwards.
-You can ask us to delete your account at any time.</p>
+<p>We keep order records for as long as tax and accounting laws require. Saved details are kept until you ask us to delete them.</p>
 
 <h2>5. Your rights</h2>
 <p>You can ask to see the information we hold about you, correct it, have it deleted, or object to how we use it.
-You can update your own details on your <a href="profile.php">profile page</a>, or contact us using the details below.
+Your saved details update each time you check out, or you can contact us using the details below.
 If you are unhappy with how we handle your data, you can complain to the Office of the Data Protection Commissioner (ODPC).</p>
 
 <h2>6. Security</h2>

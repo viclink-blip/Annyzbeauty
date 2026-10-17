@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/shop.php';
-$cartCount   = getCartCount();
+$cartCount   = cartCount();
 $flash       = getFlashMessage();
 $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
@@ -272,15 +272,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item text-danger" href="<?= SITE_URL ?>/logout.php">
-                                <i class="bi bi-box-arrow-right"></i> Logout
+                                <i class="bi bi-box-arrow-right"></i> Not you? Sign out
                             </a>
                         </li>
                     </ul>
                 </div>
 
-                <?php else: ?>
-                <a href="<?= SITE_URL ?>/login.php" class="btn-nav-login">Login</a>
-                <a href="<?= SITE_URL ?>/register.php" class="btn-nav-register">Register</a>
                 <?php endif; ?>
 
                 <!-- Hamburger -->
@@ -322,29 +319,24 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <i class="bi bi-bag-fill"></i> Shop
         </a>
         <div class="mobile-divider"></div>
-        <?php if (isLoggedIn()): ?>
-        <a href="<?= SITE_URL ?>/profile.php" class="mobile-nav-link">
-            <i class="bi bi-person-fill"></i> My Profile
-        </a>
-        <a href="<?= SITE_URL ?>/orders.php" class="mobile-nav-link">
-            <i class="bi bi-bag-check-fill"></i> My Orders
-        </a>
         <a href="<?= SITE_URL ?>/cart.php" class="mobile-nav-link">
             <i class="bi bi-cart-fill"></i> Cart
             <?php if ($cartCount > 0): ?>
             <span style="margin-left:auto;background:#E91E8C;color:#fff;font-size:11px;font-weight:700;border-radius:50px;padding:2px 8px;"><?= $cartCount ?></span>
             <?php endif; ?>
         </a>
+        <?php if (isLoggedIn() || sessionOrderIds()): ?>
+        <a href="<?= SITE_URL ?>/orders.php" class="mobile-nav-link">
+            <i class="bi bi-bag-check-fill"></i> My Orders
+        </a>
+        <?php endif; ?>
+        <?php if (isLoggedIn()): ?>
+        <a href="<?= SITE_URL ?>/profile.php" class="mobile-nav-link">
+            <i class="bi bi-person-fill"></i> My Details
+        </a>
         <div class="mobile-divider"></div>
         <a href="<?= SITE_URL ?>/logout.php" class="mobile-nav-link" style="color:#dc3545;">
-            <i class="bi bi-box-arrow-right"></i> Logout
-        </a>
-        <?php else: ?>
-        <a href="<?= SITE_URL ?>/login.php" class="mobile-nav-link">
-            <i class="bi bi-person-circle"></i> Login
-        </a>
-        <a href="<?= SITE_URL ?>/register.php" class="mobile-nav-link" style="color:#E91E8C;font-weight:600;">
-            <i class="bi bi-person-plus-fill"></i> Register
+            <i class="bi bi-box-arrow-right"></i> Not you? Sign out
         </a>
         <?php endif; ?>
     </div>

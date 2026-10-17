@@ -1,7 +1,8 @@
 <?php
 $pageTitle = 'My Profile';
-require_once 'includes/config.php';
-requireLogin();
+require_once 'includes/shop.php';
+// Saved details are only reachable on a remembered device.
+if (!isLoggedIn()) redirect(SITE_URL . '/orders.php');
 $pdo = getDB();
 $uid = $_SESSION['user_id'];
 

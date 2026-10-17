@@ -5,7 +5,7 @@ require_once 'includes/shop.php';
 require_once 'includes/policy_top.php';
 ?>
 
-<p>These terms apply when you browse annyzbeauty.co.ke, create an account, or buy from Annyzbeauty online or through WhatsApp.
+<p>These terms apply when you browse annyzbeauty.co.ke or buy from Annyzbeauty online or through WhatsApp.
 By placing an order you agree to them. Please read them together with our
 <a href="privacy.php">Privacy Policy</a>, <a href="returns.php">Returns &amp; Refunds Policy</a> and
 <a href="shipping.php">Shipping &amp; Delivery Policy</a>.</p>
@@ -13,12 +13,13 @@ By placing an order you agree to them. Please read them together with our
 <h2>1. Who we are</h2>
 <p>Annyzbeauty is an online beauty shop based in Nairobi, Kenya, selling skincare, haircare and other beauty products.</p>
 
-<h2>2. Your account</h2>
+<h2>2. Ordering and saved details</h2>
 <ul>
-    <li>You can order on WhatsApp without an account. To check out on the website you need to register.</li>
-    <li>You must give accurate details and keep your password private. You are responsible for orders placed from your account.</li>
+    <li>You do not need an account. You can check out as a guest on the website or order on WhatsApp.</li>
+    <li>At checkout you can choose to save your details with a password. We then remember your device for one year so your details fill in automatically; use "Not you? Sign out" on shared devices.</li>
+    <li>You must give accurate delivery details and keep your password private.</li>
     <li>You must be at least 18 years old, or have a parent or guardian's permission, to place an order.</li>
-    <li>We may suspend an account that is used for fraud or misuse of the site.</li>
+    <li>We may remove saved details that are used for fraud or misuse of the site.</li>
 </ul>
 
 <h2>3. Products and prices</h2>

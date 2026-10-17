@@ -1,43 +1,53 @@
 <?php
 $pageTitle = 'My Orders';
-require_once 'includes/config.php';
-requireLogin();
+require_once 'includes/shop.php';
 $pdo = getDB();
-$uid = $_SESSION['user_id'];
+ensureCustomerSchema($pdo);
+
+// Account holders (remembered device) see all their orders; guests see the
+// orders they placed in this browser session.
+$uid      = isLoggedIn() ? (int)$_SESSION['user_id'] : 0;
+$guestIds = sessionOrderIds();
+
+function loadOwnOrder(PDO $pdo, int $id): ?array {
+    $stmt = $pdo->prepare("SELECT * FROM orders WHERE id=?");
+    $stmt->execute([$id]);
+    $order = $stmt->fetch();
+    return ($order && canAccessOrder($order)) ? $order : null;
+}
 
 // Single order detail view
-$viewOrder = null;
-if (isset($_GET['view'])) {
-    $stmt = $pdo->prepare("SELECT * FROM orders WHERE id=? AND user_id=?");
-    $stmt->execute([intval($_GET['view']), $uid]);
-    $viewOrder = $stmt->fetch();
-    if ($viewOrder) {
-        $itemsStmt = $pdo->prepare("
-            SELECT oi.*, p.image FROM order_items oi
-            LEFT JOIN products p ON oi.product_id=p.id
-            WHERE oi.order_id=?
-        ");
-        $itemsStmt->execute([$viewOrder['id']]);
-        $viewOrder['items'] = $itemsStmt->fetchAll();
-    }
+$viewOrder = isset($_GET['view']) ? loadOwnOrder($pdo, intval($_GET['view'])) : null;
+if ($viewOrder) {
+    $itemsStmt = $pdo->prepare("
+        SELECT oi.*, p.image FROM order_items oi
+        LEFT JOIN products p ON oi.product_id=p.id
+        WHERE oi.order_id=?
+    ");
+    $itemsStmt->execute([$viewOrder['id']]);
+    $viewOrder['items'] = $itemsStmt->fetchAll();
 }
 
 // New order just placed
-$newOrderId = intval($_GET['new'] ?? 0);
-$newOrder   = null;
-if ($newOrderId) {
-    $stmt = $pdo->prepare("SELECT * FROM orders WHERE id=? AND user_id=?");
-    $stmt->execute([$newOrderId, $uid]);
-    $newOrder = $stmt->fetch();
-}
+$newOrder = isset($_GET['new']) ? loadOwnOrder($pdo, intval($_GET['new'])) : null;
 
 // All orders list
-$stmt = $pdo->prepare("
-    SELECT o.*, (SELECT COUNT(*) FROM order_items WHERE order_id=o.id) as item_count
-    FROM orders o WHERE o.user_id=? ORDER BY o.created_at DESC
-");
-$stmt->execute([$uid]);
-$orders = $stmt->fetchAll();
+$conditions = [];
+$params     = [];
+if ($uid) { $conditions[] = 'o.user_id=?'; $params[] = $uid; }
+if ($guestIds) {
+    $conditions[] = 'o.id IN (' . implode(',', array_fill(0, count($guestIds), '?')) . ')';
+    $params = array_merge($params, $guestIds);
+}
+$orders = [];
+if ($conditions) {
+    $stmt = $pdo->prepare("
+        SELECT o.*, (SELECT COUNT(*) FROM order_items WHERE order_id=o.id) as item_count
+        FROM orders o WHERE " . implode(' OR ', $conditions) . " ORDER BY o.created_at DESC
+    ");
+    $stmt->execute($params);
+    $orders = $stmt->fetchAll();
+}
 
 $statusClass = [
     'pending'    => 'status-pending',
@@ -385,8 +395,9 @@ endif; ?>
 <?php if (empty($orders)): ?>
 <div class="text-center py-5">
     <i class="bi bi-bag" style="font-size:4rem;color:rgba(233,30,140,0.2);"></i>
-    <h4 class="mt-3" style="font-family:'Cormorant Garamond',serif;">No orders yet</h4>
-    <p class="text-muted">You haven't placed any orders. Start shopping!</p>
+    <h4 class="mt-3" style="font-family:'Cormorant Garamond',serif;">No orders on this device yet</h4>
+    <p class="text-muted">Orders show here on the phone or computer you ordered from.
+    Looking for an earlier order? <a href="<?= sanitize(whatsappLink('Hi Annyzbeauty, I would like an update on my order.')) ?>" target="_blank" rel="noopener" style="color:#25D366;font-weight:600;">Ask us on WhatsApp</a> with your order number.</p>
     <a href="<?= SITE_URL ?>/products.php" style="background:linear-gradient(135deg,#E91E8C,#C2176F);color:#fff;border:none;border-radius:50px;padding:12px 30px;font-size:14px;font-weight:600;text-decoration:none;display:inline-block;">
         Shop Now
     </a>

@@ -27,7 +27,6 @@
                         <li><a href="<?= SITE_URL ?>/products.php?featured=1">Featured</a></li>
                         <li><a href="<?= SITE_URL ?>/cart.php">My Cart</a></li>
                         <li><a href="<?= SITE_URL ?>/orders.php">My Orders</a></li>
-                        <li><a href="<?= SITE_URL ?>/register.php">Create Account</a></li>
                     </ul>
                 </div>
 

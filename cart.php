@@ -1,29 +1,16 @@
 <?php
 $pageTitle = 'My Cart';
-require_once 'includes/config.php';
-requireLogin();
+require_once 'includes/shop.php';
 $pdo = getDB();
-$uid = $_SESSION['user_id'];
 
 // Handle remove
 if (isset($_GET['remove'])) {
-    $stmt = $pdo->prepare("DELETE FROM cart WHERE id=? AND user_id=?");
-    $stmt->execute([intval($_GET['remove']), $uid]);
+    cartSet(intval($_GET['remove']), 0);
     flashMessage('success', 'Item removed from cart.');
     redirect(SITE_URL . '/cart.php');
 }
 
-// Fetch cart items
-$stmt = $pdo->prepare("
-    SELECT c.id as cart_id, c.quantity, p.id as product_id, p.name, p.image,
-           p.price, p.sale_price, p.stock_quantity, cat.name as cat_name
-    FROM cart c
-    JOIN products p ON c.product_id = p.id
-    JOIN categories cat ON p.category_id = cat.id
-    WHERE c.user_id = ?
-");
-$stmt->execute([$uid]);
-$items = $stmt->fetchAll();
+$items = cartItems($pdo);
 
 $subtotal = 0;
 foreach ($items as $item) {

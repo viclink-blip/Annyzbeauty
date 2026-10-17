@@ -12,7 +12,7 @@ $pendingOrders  = $pdo->query("SELECT COUNT(*) FROM orders WHERE status='pending
 $todayOrders    = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at)=CURDATE()")->fetchColumn();
 
 // Recent orders
-$recentOrders = $pdo->query("SELECT o.*, CONCAT(u.first_name,' ',u.last_name) as customer FROM orders o JOIN users u ON o.user_id=u.id ORDER BY o.created_at DESC LIMIT 8")->fetchAll();
+$recentOrders = $pdo->query("SELECT o.*, COALESCE(NULLIF(o.customer_name,''), CONCAT(u.first_name,' ',u.last_name)) as customer FROM orders o LEFT JOIN users u ON o.user_id=u.id ORDER BY o.created_at DESC LIMIT 8")->fetchAll();
 
 // Low stock
 $lowStock = $pdo->query("SELECT * FROM products WHERE stock_quantity <= 5 AND is_active=1 ORDER BY stock_quantity ASC LIMIT 6")->fetchAll();
@@ -85,7 +85,7 @@ $statusClass = ['pending'=>'status-pending','processing'=>'status-processing','s
                         <?php foreach ($recentOrders as $o): ?>
                         <tr>
                             <td><strong><?= sanitize($o['order_number']) ?></strong></td>
-                            <td><?= sanitize($o['customer']) ?></td>
+                            <td><?= sanitize($o['customer'] ?? '') ?></td>
                             <td><?= formatPrice((float)$o['total']) ?></td>
                             <td><span class="status-badge <?= $o['payment_status']==='paid'?'status-paid':'status-unpaid' ?>"><?= ucfirst($o['payment_status']) ?></span></td>
                             <td><span class="status-badge <?= $statusClass[$o['status']] ?? '' ?>"><?= ucfirst($o['status']) ?></span></td>
