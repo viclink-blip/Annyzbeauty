@@ -11,16 +11,14 @@ annyzbeauty/
 ├── products.php               ← Product catalog with filters
 ├── product.php                ← Single product detail
 ├── cart.php                   ← Shopping cart
-├── checkout.php               ← Checkout & order placement
+├── checkout.php               ← Guest checkout; optional "save my details" (the only sign-up)
 ├── orders.php                 ← Customer order history
 ├── profile.php                ← Customer profile management
-├── login.php                  ← Customer login
-├── register.php               ← Customer registration (agree to policies)
 ├── paystack_pay.php           ← Starts a Paystack payment for an order
 ├── paystack_callback.php      ← Confirms the Paystack payment
 ├── terms.php / privacy.php    ← Terms & Conditions, Privacy Policy
 ├── returns.php / shipping.php ← Returns & Refunds, Shipping & Delivery
-├── logout.php                 ← Session logout
+├── logout.php                 ← "Not you? Sign out": forgets the remembered device
 ├── .htaccess                  ← Apache security config
 │
 ├── ajax/
@@ -149,6 +147,19 @@ In FileZilla: right-click the folder → File Permissions → set to `755`.
 
 ---
 
+## Checkout and Saved Details
+
+There is no login or register page. Customers shop as guests; the cart lives in the session.
+
+- **Checkout** asks for name, phone, email (Paystack needs it for the receipt) and delivery address.
+- **"Save my details for faster checkout next time"** plus a password is the only sign-up. The device is then
+  remembered for one year (`remember_tokens` table, hashed tokens), so the details fill in automatically.
+- **"Ordered before?"** at the top of checkout fills in saved details on a new device with phone number and password
+  (5 wrong attempts lock it for 15 minutes).
+- **My Orders** shows a remembered customer's orders, or a guest's orders from the current browser session.
+- Orders store `customer_name`, `customer_phone` and `customer_email`, so guest orders show fully in admin.
+  The `orders` table is updated automatically the first time (no manual SQL needed).
+
 ## Payment Setup
 
 Payments go through **Paystack** only (customers pay with M-Pesa or card on Paystack's page):
@@ -164,7 +175,7 @@ The Paystack secret key comes from the `PAYSTACK_SECRET_KEY` repository secret; 
 table automatically (adds `payment_reference` and `paid_at`).
 
 Customers who don't want an account can order on **WhatsApp** (+254 708 433 754) from the floating button,
-the product page, or the login and register pages. Send them a Paystack payment link from your Paystack dashboard.
+or the product page. Send them a Paystack payment link from your Paystack dashboard.
 
 ---
 

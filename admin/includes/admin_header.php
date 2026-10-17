@@ -1,6 +1,8 @@
 <?php
-require_once __DIR__ . '/../../includes/config.php';
+require_once __DIR__ . '/../../includes/shop.php';
 requireAdminLogin();
+// Guest orders need the customer columns before the order pages query them.
+ensureCustomerSchema(getDB());
 $currentAdmin = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>

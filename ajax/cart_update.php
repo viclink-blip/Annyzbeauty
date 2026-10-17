@@ -1,15 +1,13 @@
 <?php
-require_once '../includes/config.php';
+require_once '../includes/shop.php';
 header('Content-Type: application/json');
 
-if (!isLoggedIn()) { echo json_encode(['success'=>false]); exit; }
+// cart_id is the product id now that the cart lives in the session
+$productId = intval($_POST['cart_id'] ?? 0);
+$quantity  = max(1, intval($_POST['quantity'] ?? 1));
 
-$cartId  = intval($_POST['cart_id'] ?? 0);
-$quantity = max(1, intval($_POST['quantity'] ?? 1));
-$uid = $_SESSION['user_id'];
+if (!isset(cartQuantities()[$productId])) { echo json_encode(['success'=>false]); exit; }
 
-$pdo  = getDB();
-$stmt = $pdo->prepare("UPDATE cart SET quantity=? WHERE id=? AND user_id=?");
-$stmt->execute([$quantity, $cartId, $uid]);
+cartSet($productId, $quantity);
 
 echo json_encode(['success'=>true]);

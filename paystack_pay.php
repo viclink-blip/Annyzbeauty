@@ -1,18 +1,18 @@
 <?php
 // Starts a Paystack payment for one of the customer's unpaid orders.
 require_once 'includes/shop.php';
-requireLogin();
 $pdo = getDB();
-ensurePaystackColumns($pdo);
+ensureCustomerSchema($pdo);
 
 $stmt = $pdo->prepare("
-    SELECT o.*, u.email FROM orders o JOIN users u ON u.id=o.user_id
-    WHERE o.id=? AND o.user_id=?
+    SELECT o.*, COALESCE(NULLIF(o.customer_email,''), u.email) AS email
+    FROM orders o LEFT JOIN users u ON u.id=o.user_id
+    WHERE o.id=?
 ");
-$stmt->execute([intval($_GET['order'] ?? 0), $_SESSION['user_id']]);
+$stmt->execute([intval($_GET['order'] ?? 0)]);
 $order = $stmt->fetch();
 
-if (!$order) redirect(SITE_URL . '/orders.php');
+if (!$order || !canAccessOrder($order)) redirect(SITE_URL . '/orders.php');
 
 $orderUrl = SITE_URL . '/orders.php?view=' . $order['id'];
 if ($order['payment_status'] !== 'unpaid' || $order['status'] === 'cancelled') {

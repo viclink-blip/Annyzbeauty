@@ -3,7 +3,7 @@
 // Paystack directly before the order is marked paid.
 require_once 'includes/shop.php';
 $pdo = getDB();
-ensurePaystackColumns($pdo);
+ensureCustomerSchema($pdo);
 
 $reference = (string)($_GET['reference'] ?? $_GET['trxref'] ?? '');
 if (!preg_match('/^[A-Za-z0-9\-]{6,100}$/', $reference)) {

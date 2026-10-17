@@ -15,7 +15,7 @@ $statusClass = ['pending'=>'status-pending','processing'=>'status-processing','s
 
 // Single order view
 if (isset($_GET['view'])) {
-    $order = $pdo->prepare("SELECT o.*, CONCAT(u.first_name,' ',u.last_name) as customer, u.email, u.phone FROM orders o JOIN users u ON o.user_id=u.id WHERE o.id=?");
+    $order = $pdo->prepare("SELECT o.*, COALESCE(NULLIF(o.customer_name,''), CONCAT(u.first_name,' ',u.last_name)) as customer, COALESCE(NULLIF(o.customer_email,''), u.email) as email, COALESCE(NULLIF(o.customer_phone,''), u.phone) as phone, (o.user_id IS NULL) as is_guest FROM orders o LEFT JOIN users u ON o.user_id=u.id WHERE o.id=?");
     $order->execute([intval($_GET['view'])]);
     $order = $order->fetch();
     if ($order) {
@@ -33,14 +33,14 @@ $perPage = 15; $offset = ($page-1)*$perPage;
 
 $where = ['1=1']; $params = [];
 if ($status) { $where[] = 'o.status=?'; $params[] = $status; }
-if ($search) { $where[] = '(o.order_number LIKE ? OR CONCAT(u.first_name," ",u.last_name) LIKE ?)'; $params[] = "%$search%"; $params[] = "%$search%"; }
+if ($search) { $where[] = '(o.order_number LIKE ? OR o.customer_name LIKE ? OR o.customer_phone LIKE ? OR CONCAT(u.first_name," ",u.last_name) LIKE ?)'; array_push($params, "%$search%", "%$search%", "%$search%", "%$search%"); }
 $whereStr = implode(' AND ', $where);
 
-$total = $pdo->prepare("SELECT COUNT(*) FROM orders o JOIN users u ON o.user_id=u.id WHERE $whereStr");
+$total = $pdo->prepare("SELECT COUNT(*) FROM orders o LEFT JOIN users u ON o.user_id=u.id WHERE $whereStr");
 $total->execute($params); $total = $total->fetchColumn();
 $totalPages = ceil($total/$perPage);
 
-$orders = $pdo->prepare("SELECT o.*, CONCAT(u.first_name,' ',u.last_name) as customer FROM orders o JOIN users u ON o.user_id=u.id WHERE $whereStr ORDER BY o.created_at DESC LIMIT $perPage OFFSET $offset");
+$orders = $pdo->prepare("SELECT o.*, COALESCE(NULLIF(o.customer_name,''), CONCAT(u.first_name,' ',u.last_name)) as customer FROM orders o LEFT JOIN users u ON o.user_id=u.id WHERE $whereStr ORDER BY o.created_at DESC LIMIT $perPage OFFSET $offset");
 $orders->execute($params);
 $orders = $orders->fetchAll();
 ?>
@@ -90,8 +90,9 @@ $orders = $orders->fetchAll();
         <div class="card border-0 shadow-sm rounded-xl">
             <div class="card-body p-4">
                 <h6 class="fw-bold mb-3">Customer</h6>
-                <p class="mb-1"><strong><?= sanitize($order['customer']) ?></strong></p>
-                <p class="mb-1" style="font-size:13px;"><?= sanitize($order['email']) ?></p>
+                <p class="mb-1"><strong><?= sanitize($order['customer'] ?? '') ?></strong>
+                <?php if (!empty($order['is_guest'])): ?><span class="badge bg-secondary ms-1" style="font-size:10px;">Guest</span><?php endif; ?></p>
+                <p class="mb-1" style="font-size:13px;"><?= sanitize($order['email'] ?? '') ?></p>
                 <p class="mb-1" style="font-size:13px;"><?= sanitize($order['phone'] ?? '') ?></p>
                 <hr style="border-color:var(--border);">
                 <p class="mb-0" style="font-size:13px;"><strong>Ship to:</strong><br>
@@ -175,7 +176,7 @@ $orders = $orders->fetchAll();
                 <?php foreach ($orders as $o): ?>
                 <tr>
                     <td style="padding-left:20px;"><strong><?= sanitize($o['order_number']) ?></strong></td>
-                    <td><?= sanitize($o['customer']) ?></td>
+                    <td><?= sanitize($o['customer'] ?? '') ?></td>
                     <td><?= date('d M Y', strtotime($o['created_at'])) ?></td>
                     <td style="font-weight:700;color:var(--pink);"><?= formatPrice((float)$o['total']) ?></td>
                     <td><span class="status-badge <?= $o['payment_status']==='paid'?'status-paid':'status-unpaid' ?>"><?= ucfirst($o['payment_status']) ?></span></td>
