@@ -103,8 +103,17 @@ define('SITE_URL', 'https://annyzbeauty.rf.gd'); // your InfinityFree domain
 | `FTP_USERNAME` | e.g. `epiz_12345678`                  |
 | `FTP_PASSWORD` | your FTP / hosting account password   |
 
-`includes/config.php`, `database/` and uploaded product images are never overwritten, so set up
-`config.php` on the server once (Step 3) and leave it there.
+The deploy also fills in `includes/config.php` from these secrets, so you don't edit it on the server:
+
+| Secret     | Value                                                      |
+|------------|------------------------------------------------------------|
+| `DB_HOST`  | MySQL hostname from VistaPanel, e.g. `sql200.infinityfree.com` |
+| `DB_USER`  | MySQL username, e.g. `if0_12345678`                        |
+| `DB_PASS`  | MySQL password                                             |
+| `DB_NAME`  | full database name, e.g. `if0_12345678_annyzbeauty`        |
+| `SITE_URL` | live address, e.g. `https://annyzbeauty.co.ke`             |
+
+The deploy stops before uploading anything if one of these is missing.
 
 ### Step 5: Create the Products Upload Folder
 After uploading, ensure `/htdocs/assets/images/products/` exists and is **writable**.

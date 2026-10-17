@@ -11,6 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The live database password comes from repository secrets and is
+      # written into includes/config.php only on the runner, never committed.
+      - name: Write live config from secrets
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: python3 .github/scripts/write_config.py
+
       - name: Upload site via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -18,8 +29,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /htdocs/
-          # includes/config.php holds the live database password, so it is
-          # edited on the server and never overwritten from the repo.
           exclude: |
             **/.git*
             **/.git*/**
@@ -27,5 +36,3 @@ jobs:
             README.md
             CNAME
             database/**
-            includes/config.php
-            assets/images/products/**
