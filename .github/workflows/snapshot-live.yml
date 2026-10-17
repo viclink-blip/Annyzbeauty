@@ -39,7 +39,7 @@ jobs:
         run: |
           # A custom domain gets its own folder on InfinityFree; fall back to /htdocs.
           SRC=/htdocs
-          if grep -qx "annyzbeauty.co.ke/" root-listing.txt || grep -qx "annyzbeauty.co.ke" root-listing.txt; then
+          if grep -qE "^/?annyzbeauty\.co\.ke/?$" root-listing.txt; then
             SRC=/annyzbeauty.co.ke/htdocs
           fi
           echo "Downloading from $SRC"
@@ -56,6 +56,11 @@ jobs:
 
       - name: Commit to live-snapshot branch
         run: |
+          # Refuse to commit anything that looks like a hard-coded credential.
+          if grep -rIlE "sk_(live|test)_[A-Za-z0-9]{8,}|mysqli_connect\(\s*['\"]|new mysqli\(\s*['\"]" "$RUNNER_TEMP/live"; then
+            echo "::error::Files above contain what looks like a secret; not committing."
+            exit 1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -B live-snapshot
