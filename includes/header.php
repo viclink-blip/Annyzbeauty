@@ -100,9 +100,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <li class="nav-item">
                     <a class="btn btn-outline-pink btn-sm" href="<?= SITE_URL ?>/login.php">Login</a>
                 </li>
-                <li class="nav-item ms-1">
-                    <a class="btn btn-pink btn-sm" href="<?= SITE_URL ?>/register.php">Register</a>
-                </li>
                 <?php endif; ?>
             </ul>
         </div>

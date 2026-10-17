@@ -14,7 +14,6 @@ annyzbeauty/
 ├── checkout.php               ← Checkout & order placement
 ├── orders.php                 ← Customer order history
 ├── profile.php                ← Customer profile management
-├── register.php               ← Customer registration
 ├── login.php                  ← Customer login
 ├── logout.php                 ← Session logout
 ├── .htaccess                  ← Apache security config
