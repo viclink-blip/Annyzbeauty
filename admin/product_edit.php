@@ -131,7 +131,7 @@ $imgSrc = SITE_URL . '/assets/images/products/' . ($product['image'] ?? 'placeho
                 </div>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" name="is_featured" id="isFeatured" <?= $data['is_featured']?'checked':'' ?>>
-                    <label class="form-check-label" for="isFeatured">⭐ Mark as Featured</label>
+                    <label class="form-check-label" for="isFeatured">Mark as Featured</label>
                 </div>
             </div>
         </div>

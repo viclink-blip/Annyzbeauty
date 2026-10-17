@@ -94,6 +94,14 @@ require_once 'includes/header.php';
             </div>
             <?php endif; ?>
 
+            <!-- Order on WhatsApp (no account needed) -->
+            <a href="<?= sanitize(whatsappLink('Hi Annyzbeauty, I would like to order: ' . $p['name'] . ' (' . formatPrice((float)$displayPrice) . '). ' . SITE_URL . '/product.php?id=' . $p['id'])) ?>"
+               target="_blank" rel="noopener" class="btn w-100 mb-4"
+               style="max-width:360px;background:#25D366;color:#fff;border-radius:50px;padding:12px 20px;font-weight:600;">
+                <i class="bi bi-whatsapp me-2"></i>Order on WhatsApp
+            </a>
+            <div style="font-size:12px;color:var(--mid-grey);margin:-14px 0 20px;">No account needed. We will confirm your order on WhatsApp.</div>
+
             <!-- Meta -->
             <div class="border-top pt-3" style="font-size:13px;color:var(--mid-grey);">
                 <?php if ($p['sku']): ?><div class="mb-1"><strong>SKU:</strong> <?= sanitize($p['sku']) ?></div><?php endif; ?>
@@ -135,9 +143,9 @@ require_once 'includes/header.php';
                 <ul style="line-height:2;color:#555;font-size:14px;">
                     <li>Standard delivery: <strong>2–4 business days</strong> (Nairobi), 4–7 days (nationwide).</li>
                     <li>Shipping fee: <strong><?= formatPrice(SHIPPING_FEE) ?></strong> · Free on orders over <?= formatPrice(FREE_SHIPPING_THRESHOLD) ?>.</li>
-                    <li>Payment via <strong>M-Pesa, PayPal</strong>, or Cash on Delivery.</li>
-                    <li>Returns accepted within <strong>7 days</strong> of delivery for unused, sealed items.</li>
-                    <li>Contact us on WhatsApp: <strong>+254 758 556 523</strong></li>
+                    <li>Secure payment with <strong>Paystack</strong> (M-Pesa or card).</li>
+                    <li>Returns accepted within <strong>7 days</strong> of delivery for unused, sealed items. See our <a href="returns.php">Returns &amp; Refunds Policy</a>.</li>
+                    <li>Contact us on WhatsApp: <strong><?= WHATSAPP_DISPLAY ?></strong></li>
                 </ul>
             </div>
         </div>

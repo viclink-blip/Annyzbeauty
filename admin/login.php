@@ -33,12 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../assets/images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="../assets/images/logo.png">
 </head>
 <body style="background:linear-gradient(135deg,#1A1A1A,#2D1520);min-height:100vh;display:flex;align-items:center;">
 <div class="container">
     <div style="max-width:420px;margin:0 auto;">
         <div class="text-center mb-4">
-            <div class="brand-icon mx-auto mb-3"><i class="bi bi-flower1"></i></div>
+            <img src="../assets/images/logo.png" alt="Annyzbeauty"
+                 style="height:80px;width:auto;object-fit:contain;margin-bottom:14px;filter:drop-shadow(0 4px 12px rgba(233,30,140,0.3));">
             <h2 style="font-family:var(--font-display);color:white;font-size:1.8rem;">Admin Panel</h2>
             <p style="color:rgba(255,255,255,0.5);font-size:13px;">Sign in to manage Annyzbeauty</p>
         </div>

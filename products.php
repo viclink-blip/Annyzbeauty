@@ -78,6 +78,8 @@ $pageTitle = $search ? 'Search: ' . sanitize($search) : ($category ? ucwords(str
     </div>
 </div>
 
+<?php include 'includes/stats.php'; ?>
+
 <div class="container py-5">
     <div class="row g-4">
 
@@ -119,7 +121,7 @@ $pageTitle = $search ? 'Search: ' . sanitize($search) : ($category ? ucwords(str
                     <div class="filter-title">Filter</div>
                     <div class="filter-item">
                         <input type="checkbox" name="featured" value="1" id="chk-featured" <?= $featured ? 'checked' : '' ?> onchange="this.form.submit()">
-                        <label for="chk-featured">⭐ Featured Only</label>
+                        <label for="chk-featured">Featured Only</label>
                     </div>
                 </div>
             </form>

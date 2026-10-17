@@ -1,259 +1,352 @@
 <?php
 $pageTitle = 'Home';
 require_once 'includes/header.php';
-$pdo = getDB();
-
-// Featured products
-$featured = $pdo->query("SELECT p.*, c.name as cat_name FROM products p JOIN categories c ON p.category_id=c.id WHERE p.is_featured=1 AND p.is_active=1 LIMIT 8")->fetchAll();
-
-// All categories
-$categories = $pdo->query("SELECT * FROM categories WHERE is_active=1 ORDER BY sort_order")->fetchAll();
-
-// New arrivals (latest 4)
-$newArrivals = $pdo->query("SELECT p.*, c.name as cat_name FROM products p JOIN categories c ON p.category_id=c.id WHERE p.is_active=1 ORDER BY p.created_at DESC LIMIT 4")->fetchAll();
-
-// Counts for stats
-$totalProducts = $pdo->query("SELECT COUNT(*) FROM products WHERE is_active=1")->fetchColumn();
 ?>
 
-<!-- ===== HERO ===== -->
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center g-5">
-            <div class="col-lg-6 hero-content">
-                <div class="hero-eyebrow">
-                    <i class="bi bi-stars"></i> Kenya's Premium Beauty Store
-                </div>
-                <h1 class="hero-title">
-                    Discover Your<br>
-                    <em>Natural Glow</em><br>
-                    Within
-                </h1>
-                <p class="hero-subtitle">
-                    Curated skincare, makeup, haircare, and fragrances for every skin tone and beauty ritual. Delivered across Kenya.
-                </p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="products.php" class="btn btn-pink-lg">Shop Now <i class="bi bi-arrow-right ms-1"></i></a>
-                    <a href="products.php?featured=1" class="btn btn-outline btn-lg" style="border:2px solid rgba(255,255,255,0.3);color:white;border-radius:12px;padding:14px 28px;">
-                        Best Sellers
-                    </a>
-                </div>
-                <div class="hero-stats">
-                    <div>
-                        <div class="hero-stat-num"><?= $totalProducts ?>+</div>
-                        <div class="hero-stat-label">Products</div>
-                    </div>
-                    <div>
-                        <div class="hero-stat-num">500+</div>
-                        <div class="hero-stat-label">Happy Clients</div>
-                    </div>
-                    <div>
-                        <div class="hero-stat-num">100%</div>
-                        <div class="hero-stat-label">Authentic</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 hero-image-wrap">
-                <div class="hero-image-card">
-                    <img src="assets/images/hero-beauty.jpg" alt="Beauty Products" onerror="this.src='https://placehold.co/400x480/E91E8C/white?text=Annyzbeauty'">
-                </div>
-                <div class="hero-float-badge top-right">
-                    <span class="badge-dot"></span> Free Delivery over KSh 5,000
-                </div>
-                <div class="hero-float-badge bottom-left">
-                    ⭐ 4.9 Rating · 500+ Reviews
-                </div>
-            </div>
-        </div>
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Hero Wrapper ── */
+.hero-full {
+    min-height: calc(100vh - 68px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(145deg, #fff 0%, #fff5fb 40%, #fce4f3 100%);
+}
+
+/* ── Floating Background Circles ── */
+.bg-circles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+.bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatUp linear infinite;
+}
+.bg-circle:nth-child(1)  { width:320px; height:320px; background:radial-gradient(circle,rgba(233,30,140,0.08),transparent 70%); left:-80px;  top:10%;  animation-duration:18s; animation-delay:0s;   opacity:0; }
+.bg-circle:nth-child(2)  { width:200px; height:200px; background:radial-gradient(circle,rgba(233,30,140,0.06),transparent 70%); right:5%;   top:20%;  animation-duration:22s; animation-delay:2s;   opacity:0; }
+.bg-circle:nth-child(3)  { width:260px; height:260px; background:radial-gradient(circle,rgba(233,30,140,0.07),transparent 70%); left:30%;   bottom:5%; animation-duration:20s; animation-delay:4s;   opacity:0; }
+.bg-circle:nth-child(4)  { width:150px; height:150px; background:radial-gradient(circle,rgba(233,30,140,0.05),transparent 70%); right:20%;  bottom:15%;animation-duration:25s; animation-delay:1s;   opacity:0; }
+.bg-circle:nth-child(5)  { width:100px; height:100px; background:radial-gradient(circle,rgba(233,30,140,0.09),transparent 70%); left:55%;   top:8%;   animation-duration:16s; animation-delay:3s;   opacity:0; }
+
+@keyframes floatUp {
+    0%   { transform: translateY(60px) scale(0.85); opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 1; }
+    100% { transform: translateY(-80px) scale(1.1); opacity: 0; }
+}
+
+/* ── Sparkles ── */
+.sparkle {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #E91E8C;
+    opacity: 0;
+    animation: sparkleAnim ease-in-out infinite;
+    pointer-events: none;
+}
+.sparkle:nth-child(6)  { top:18%; left:12%;  animation-duration:3.2s; animation-delay:0.0s; }
+.sparkle:nth-child(7)  { top:72%; left:80%;  animation-duration:2.8s; animation-delay:0.6s; }
+.sparkle:nth-child(8)  { top:35%; left:88%;  animation-duration:3.6s; animation-delay:1.2s; }
+.sparkle:nth-child(9)  { top:80%; left:22%;  animation-duration:2.5s; animation-delay:0.4s; }
+.sparkle:nth-child(10) { top:12%; left:60%;  animation-duration:3.0s; animation-delay:1.8s; }
+.sparkle:nth-child(11) { top:55%; left:5%;   animation-duration:2.7s; animation-delay:0.9s; }
+.sparkle:nth-child(12) { top:25%; left:45%;  animation-duration:3.4s; animation-delay:2.1s; }
+
+@keyframes sparkleAnim {
+    0%,100% { transform: scale(0) rotate(0deg);   opacity: 0; }
+    30%      { transform: scale(1.4) rotate(45deg); opacity: 0.7; }
+    60%      { transform: scale(0.8) rotate(90deg); opacity: 0.4; }
+}
+
+/* ── Hero Content ── */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 40px 24px;
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ── Flower Icon ── */
+.hero-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, #E91E8C, #C2176F);
+    border-radius: 50%;
+    font-size: 32px; color: #fff;
+    box-shadow: 0 8px 28px rgba(233,30,140,0.35);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeSlideUp 0.8s ease 0.2s forwards;
+}
+
+/* ── Brand Name ── */
+.hero-brand {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(3rem, 10vw, 5.8rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    color: #1A1A1A;
+    opacity: 0;
+    animation: fadeSlideUp 0.9s ease 0.4s forwards;
+}
+.hero-brand span {
+    background: linear-gradient(135deg, #E91E8C, #C2176F, #E91E8C);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+/* ── Divider ── */
+.hero-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px auto;
+    opacity: 0;
+    animation: fadeSlideUp 0.8s ease 0.6s forwards;
+}
+.hero-divider-line {
+    width: 50px; height: 1.5px;
+    background: linear-gradient(90deg, transparent, #E91E8C);
+}
+.hero-divider-line.right {
+    background: linear-gradient(90deg, #E91E8C, transparent);
+}
+.hero-divider-dot {
+    width: 6px; height: 6px;
+    background: #E91E8C; border-radius: 50%;
+}
+
+/* ── Slogan ── */
+.hero-slogan {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(1.1rem, 3.5vw, 1.5rem);
+    font-weight: 400;
+    font-style: italic;
+    color: #E91E8C;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeSlideUp 0.8s ease 0.8s forwards;
+}
+
+/* ── Subtitle ── */
+.hero-subtitle {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+    font-weight: 400;
+    color: #888;
+    line-height: 1.7;
+    margin: 16px auto 0;
+    max-width: 400px;
+    opacity: 0;
+    animation: fadeSlideUp 0.8s ease 1.0s forwards;
+}
+
+/* ── Buttons ── */
+.hero-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 36px;
+    opacity: 0;
+    animation: fadeSlideUp 0.9s ease 1.2s forwards;
+}
+
+.btn-hero-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 34px;
+    background: linear-gradient(135deg, #E91E8C, #C2176F);
+    color: #fff !important;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 50px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    box-shadow: 0 6px 24px rgba(233,30,140,0.30);
+    transition: all 0.28s ease;
+    border: none;
+}
+.btn-hero-primary:hover {
+    background: linear-gradient(135deg, #C2176F, #A0115C);
+    color: #fff !important;
+    box-shadow: 0 10px 32px rgba(233,30,140,0.42);
+    transform: translateY(-2px);
+}
+
+.btn-hero-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 32px;
+    background: transparent;
+    color: #E91E8C !important;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 50px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    border: 2px solid #E91E8C;
+    transition: all 0.28s ease;
+}
+.btn-hero-secondary:hover {
+    background: #FFF0F7;
+    color: #C2176F !important;
+    border-color: #C2176F;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(233,30,140,0.15);
+}
+
+/* ── Trust Pills ── */
+.hero-trust {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.6s forwards;
+}
+.trust-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 0.3px;
+}
+.trust-pill i { color: #E91E8C; font-size: 13px; }
+
+/* ── Core Animations ── */
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 576px) {
+    .hero-full { min-height: calc(100vh - 60px); }
+    .hero-icon { width: 58px; height: 58px; font-size: 26px; margin-bottom: 20px; }
+    .hero-buttons { gap: 10px; margin-top: 28px; }
+    .btn-hero-primary, .btn-hero-secondary { padding: 12px 26px; font-size: 13.5px; }
+    .hero-trust { gap: 14px; margin-top: 28px; }
+    .hero-slogan { letter-spacing: 2px; }
+    .hero-content { padding: 28px 20px; }
+}
+@media (max-width: 360px) {
+    .btn-hero-primary, .btn-hero-secondary { width: 100%; justify-content: center; }
+    .hero-buttons { flex-direction: column; width: 100%; }
+}
+</style>
+
+<!-- HERO SECTION -->
+<section class="hero-full">
+
+    <!-- Floating Background -->
+    <div class="bg-circles">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
     </div>
-</section>
 
-<!-- ===== TRUST BAR ===== -->
-<section style="background:var(--pink-soft);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 0;">
-    <div class="container">
-        <div class="row g-3 text-center">
-            <div class="col-6 col-md-3">
-                <i class="bi bi-truck text-pink-color fs-4"></i>
-                <div class="fw-600 mt-1" style="font-size:13px;font-weight:600;">Fast Delivery</div>
-                <div style="font-size:12px;color:var(--mid-grey);">Nairobi & Nationwide</div>
-            </div>
-            <div class="col-6 col-md-3">
-                <i class="bi bi-shield-check text-pink-color fs-4"></i>
-                <div class="fw-600 mt-1" style="font-size:13px;font-weight:600;">100% Authentic</div>
-                <div style="font-size:12px;color:var(--mid-grey);">Genuine Products Only</div>
-            </div>
-            <div class="col-6 col-md-3">
-                <i class="bi bi-arrow-counterclockwise text-pink-color fs-4"></i>
-                <div class="fw-600 mt-1" style="font-size:13px;font-weight:600;">Easy Returns</div>
-                <div style="font-size:12px;color:var(--mid-grey);">Within 7 Days</div>
-            </div>
-            <div class="col-6 col-md-3">
-                <i class="bi bi-headset text-pink-color fs-4"></i>
-                <div class="fw-600 mt-1" style="font-size:13px;font-weight:600;">24/7 Support</div>
-                <div style="font-size:12px;color:var(--mid-grey);">WhatsApp & Phone</div>
-            </div>
-        </div>
-    </div>
-</section>
+    <!-- Content -->
+    <div class="hero-content">
 
-<!-- ===== CATEGORIES ===== -->
-<section class="section-pad">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-eyebrow">Explore</span>
-            <h2 class="section-title">Shop by Category</h2>
-            <div class="section-divider mx-auto"></div>
+        <!-- Flower Icon -->
+        <div class="hero-icon">
+            <i class="bi bi-flower1"></i>
         </div>
 
-        <?php
-        $catIcons = ['skincare'=>'bi-droplet-fill','makeup'=>'bi-palette-fill','hair-care'=>'bi-scissors','fragrances'=>'bi-flower2','nail-care'=>'bi-brush-fill','body-care'=>'bi-heart-fill'];
-        ?>
-        <div class="row g-3 justify-content-center">
-            <?php foreach ($categories as $cat): ?>
-            <div class="col-6 col-md-4 col-lg-2">
-                <a href="products.php?category=<?= urlencode($cat['slug']) ?>" class="text-decoration-none">
-                    <div class="category-card">
-                        <div class="cat-icon"><i class="bi <?= $catIcons[$cat['slug']] ?? 'bi-bag-fill' ?>"></i></div>
-                        <div class="cat-name"><?= sanitize($cat['name']) ?></div>
-                    </div>
-                </a>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
+        <!-- Brand Name -->
+        <h1 class="hero-brand">
+            Annyz<span>beauty</span>
+        </h1>
 
-<!-- ===== FEATURED PRODUCTS ===== -->
-<section class="section-pad" style="background:var(--light-grey);">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-end mb-5 flex-wrap gap-3">
-            <div>
-                <span class="section-eyebrow">Curated</span>
-                <h2 class="section-title mb-0">Featured Products</h2>
-                <div class="section-divider left"></div>
-            </div>
-            <a href="products.php?featured=1" class="btn btn-outline-pink">View All <i class="bi bi-arrow-right ms-1"></i></a>
+        <!-- Divider -->
+        <div class="hero-divider">
+            <div class="hero-divider-line"></div>
+            <div class="hero-divider-dot"></div>
+            <div class="hero-divider-line right"></div>
         </div>
 
-        <div class="row g-4">
-            <?php foreach ($featured as $p): ?>
-            <div class="col-6 col-md-4 col-lg-3 reveal">
-                <?php include 'includes/product_card.php'; ?>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
+        <!-- Slogan -->
+        <p class="hero-slogan">Glow. Bloom. Radiate.</p>
 
-<!-- ===== PROMO BANNER ===== -->
-<section class="section-pad">
-    <div class="container">
-        <div class="promo-banner">
-            <div class="row align-items-center g-4">
-                <div class="col-lg-7">
-                    <span style="background:rgba(233,30,140,0.25);color:var(--pink-light);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 14px;border-radius:50px;display:inline-block;margin-bottom:14px;">
-                        ⚡ Flash Sale
-                    </span>
-                    <h2 style="font-family:var(--font-display);font-size:2.4rem;color:white;font-weight:400;margin-bottom:10px;">
-                        Up to <span style="color:var(--pink-light);">30% Off</span><br>Skincare Bundles
-                    </h2>
-                    <p style="color:rgba(255,255,255,0.65);font-size:14px;margin-bottom:24px;">
-                        Grab our best skincare bundles at amazing discounts. Offer ends tonight!
-                    </p>
-                    <a href="products.php?category=skincare" class="btn btn-pink-lg">Shop Sale</a>
-                </div>
-                <div class="col-lg-5 text-center text-lg-end">
-                    <p style="color:rgba(255,255,255,0.5);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Offer Ends In</p>
-                    <div class="promo-countdown d-flex justify-content-center justify-content-lg-end" id="promoCountdown">
-                        <div class="countdown-unit">
-                            <div class="countdown-num">12</div>
-                            <div class="countdown-label">Hrs</div>
-                        </div>
-                        <div class="countdown-unit">
-                            <div class="countdown-num">45</div>
-                            <div class="countdown-label">Min</div>
-                        </div>
-                        <div class="countdown-unit">
-                            <div class="countdown-num">00</div>
-                            <div class="countdown-label">Sec</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+        <!-- Subtitle -->
+        <p class="hero-subtitle">
+            Premium beauty products for every skin tone, delivered across Kenya.
+        </p>
 
-<!-- ===== NEW ARRIVALS ===== -->
-<section class="section-pad" style="background:var(--pink-soft);">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-end mb-5 flex-wrap gap-3">
-            <div>
-                <span class="section-eyebrow">Fresh In</span>
-                <h2 class="section-title mb-0">New Arrivals</h2>
-                <div class="section-divider left"></div>
-            </div>
-            <a href="products.php" class="btn btn-outline-pink">All Products <i class="bi bi-arrow-right ms-1"></i></a>
+        <!-- Buttons -->
+        <div class="hero-buttons">
+            <a href="<?= SITE_URL ?>/index.php" class="btn-hero-secondary">
+                <i class="bi bi-house-fill"></i> Home
+            </a>
+            <a href="<?= SITE_URL ?>/products.php" class="btn-hero-primary">
+                <i class="bi bi-bag-fill"></i> Shop Now
+            </a>
         </div>
-        <div class="row g-4">
-            <?php foreach ($newArrivals as $p): ?>
-            <div class="col-6 col-md-4 col-lg-3 reveal">
-                <?php include 'includes/product_card.php'; ?>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
 
-<!-- ===== TESTIMONIALS ===== -->
-<section class="section-pad">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-eyebrow">Reviews</span>
-            <h2 class="section-title">What Our Customers Say</h2>
-            <div class="section-divider mx-auto"></div>
+        <!-- Trust Pills -->
+        <div class="hero-trust">
+            <span class="trust-pill">
+                <i class="bi bi-shield-check-fill"></i> 100% Authentic
+            </span>
+            <span class="trust-pill">
+                <i class="bi bi-truck"></i> Kenya Delivery
+            </span>
+            <span class="trust-pill">
+                <i class="bi bi-phone-fill"></i> M-Pesa Accepted
+            </span>
         </div>
-        <div class="row g-4">
-            <?php
-            $testimonials = [
-                ['name'=>'Jane W.','city'=>'Nairobi','text'=>'The Vitamin C serum is absolutely amazing! My skin has never looked better. Fast delivery and excellent packaging too.','rating'=>5,'init'=>'JW'],
-                ['name'=>'Amina H.','city'=>'Mombasa','text'=>'I ordered the Pink Blossom perfume and it smells divine. Got so many compliments at work. Will definitely order again!','rating'=>5,'init'=>'AH'],
-                ['name'=>'Cynthia M.','city'=>'Kisumu','text'=>'Best beauty shop in Kenya! The argan oil serum transformed my hair from frizzy to silky smooth in just two weeks.','rating'=>5,'init'=>'CM'],
-            ];
-            foreach ($testimonials as $t):
-            ?>
-            <div class="col-md-4 reveal">
-                <div class="testimonial-card h-100">
-                    <div class="product-rating mb-2">
-                        <?= str_repeat('<i class="bi bi-star-fill"></i>', $t['rating']) ?>
-                    </div>
-                    <p class="testimonial-text"><?= $t['text'] ?></p>
-                    <div class="testimonial-author">
-                        <div class="reviewer-avatar"><?= $t['init'] ?></div>
-                        <div>
-                            <div class="reviewer-name"><?= $t['name'] ?></div>
-                            <div class="reviewer-sub"><?= $t['city'] ?>, Kenya</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
 
-<!-- ===== NEWSLETTER ===== -->
-<section style="background:linear-gradient(135deg,#E91E8C,#C2176F);padding:60px 0;">
-    <div class="container text-center">
-        <h2 style="font-family:var(--font-display);color:white;font-size:2.2rem;margin-bottom:10px;">Join the Beauty Club</h2>
-        <p style="color:rgba(255,255,255,0.8);margin-bottom:28px;font-size:15px;">Subscribe to get exclusive deals, beauty tips, and new arrivals straight to your inbox.</p>
-        <form class="d-flex gap-2 justify-content-center flex-wrap" style="max-width:480px;margin:0 auto;">
-            <input type="email" placeholder="Enter your email address" class="form-control" style="border-radius:12px;border:none;padding:12px 18px;flex:1;">
-            <button type="submit" class="btn" style="background:var(--black);color:white;border-radius:12px;padding:12px 24px;font-weight:600;">
-                Subscribe
-            </button>
-        </form>
-        <p style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:12px;">No spam, unsubscribe anytime.</p>
     </div>
 </section>
 

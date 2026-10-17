@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_email'] = $user['email'];
             $redirect = $_SESSION['redirect_after_login'] ?? SITE_URL . '/index.php';
             unset($_SESSION['redirect_after_login']);
-            flashMessage('success', 'Welcome back, ' . $user['first_name'] . '! 💄');
+            flashMessage('success', 'Welcome back, ' . $user['first_name'] . '!');
             redirect($redirect);
         } else {
             $error = 'Invalid email or password. Please try again.';
@@ -78,6 +78,17 @@ require_once 'includes/header.php';
             <div class="text-center mt-4" style="font-size:13px;color:var(--mid-grey);">
                 <p class="mb-1">Demo: <strong>jane@example.com</strong> / <strong>Admin@1234</strong></p>
             </div>
+
+            <p class="text-center mt-3 mb-0" style="font-size:14px;">
+                Don't have an account? <a href="register.php" class="fw-600" style="color:var(--pink);">Create one free</a>
+            </p>
+            <p class="text-center mt-2 mb-0" style="font-size:13px;color:var(--mid-grey);">
+                Prefer not to register?
+                <a href="<?= sanitize(whatsappLink('Hi Annyzbeauty, I would like to place an order.')) ?>"
+                   target="_blank" rel="noopener" style="color:#25D366;font-weight:600;">
+                    <i class="bi bi-whatsapp"></i> Order on WhatsApp
+                </a>
+            </p>
         </div>
     </div>
 </div>

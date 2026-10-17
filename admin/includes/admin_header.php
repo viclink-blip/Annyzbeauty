@@ -13,20 +13,23 @@ $currentAdmin = basename($_SERVER['PHP_SELF']);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="<?= SITE_URL ?>/assets/css/style.css" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="<?= SITE_URL ?>/assets/images/logo.png">
+    <link rel="shortcut icon" type="image/png" href="<?= SITE_URL ?>/assets/images/logo.png">
+    <link rel="apple-touch-icon" href="<?= SITE_URL ?>/assets/images/logo.png">
 </head>
 <body>
 
 <!-- Admin Sidebar -->
 <aside class="admin-sidebar" id="adminSidebar">
     <div class="admin-sidebar-brand">
-        <div class="d-flex align-items-center gap-2">
-            <div class="brand-icon brand-icon-sm"><i class="bi bi-flower1"></i></div>
-            <div>
-                <span style="color:white;font-family:var(--font-display);font-size:1.1rem;font-weight:600;">
-                    Annyz<span style="color:var(--pink-light);">beauty</span>
-                </span>
-                <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;">ADMIN PANEL</div>
-            </div>
+        <a href="<?= SITE_URL ?>" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
+            <img src="<?= SITE_URL ?>/assets/images/logo.png"
+                 alt="Annyzbeauty"
+                 style="height:44px;width:auto;object-fit:contain;">
+        </a>
+        <div style="font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;margin-top:4px;">Admin Panel</div>
+    </div>
         </div>
     </div>
 
