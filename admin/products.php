@@ -103,7 +103,7 @@ $cats = $pdo->query("SELECT * FROM categories WHERE is_active=1 ORDER BY sort_or
                     </td>
                     <td>
                         <?php if ($p['is_featured']): ?>
-                        <span style="color:var(--pink);font-size:16px;">⭐</span>
+                        <i class="bi bi-star-fill" style="color:var(--pink);font-size:15px;" title="Featured"></i>
                         <?php else: ?>
                         <span style="color:var(--mid-grey);font-size:13px;">—</span>
                         <?php endif; ?>

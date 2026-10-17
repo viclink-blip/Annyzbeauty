@@ -143,9 +143,7 @@ require_once 'includes/header.php';
                 <div class="mt-3 mb-4">
                     <div style="font-size:12px;color:var(--mid-grey);margin-bottom:8px;">We accept:</div>
                     <div class="payment-badges" style="justify-content:flex-start;">
-                        <span class="payment-badge" style="background:var(--pink-soft);color:var(--black);"><i class="bi bi-phone-fill text-pink-color"></i> M-Pesa</span>
-                        <span class="payment-badge" style="background:var(--pink-soft);color:var(--black);"><i class="bi bi-paypal text-pink-color"></i> PayPal</span>
-                        <span class="payment-badge" style="background:var(--pink-soft);color:var(--black);"><i class="bi bi-cash-stack text-pink-color"></i> COD</span>
+                        <span class="payment-badge" style="background:var(--pink-soft);color:var(--black);"><i class="bi bi-shield-lock-fill text-pink-color"></i> Paystack (M-Pesa or card)</span>
                     </div>
                 </div>
 

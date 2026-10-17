@@ -1,9 +1,9 @@
-# Annyzbeauty Beauty Shop 🌸
+# Annyzbeauty Beauty Shop
 **A complete PHP/MySQL e-commerce website for Annyzbeauty**
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 annyzbeauty/
@@ -15,6 +15,11 @@ annyzbeauty/
 ├── orders.php                 ← Customer order history
 ├── profile.php                ← Customer profile management
 ├── login.php                  ← Customer login
+├── register.php               ← Customer registration (agree to policies)
+├── paystack_pay.php           ← Starts a Paystack payment for an order
+├── paystack_callback.php      ← Confirms the Paystack payment
+├── terms.php / privacy.php    ← Terms & Conditions, Privacy Policy
+├── returns.php / shipping.php ← Returns & Refunds, Shipping & Delivery
 ├── logout.php                 ← Session logout
 ├── .htaccess                  ← Apache security config
 │
@@ -38,6 +43,7 @@ annyzbeauty/
 │
 ├── includes/
 │   ├── config.php             ← DB config + utility functions
+│   ├── shop.php               ← WhatsApp number + Paystack helpers
 │   ├── header.php             ← Site header + navbar
 │   ├── footer.php             ← Site footer
 │   └── product_card.php       ← Reusable product card
@@ -57,7 +63,7 @@ annyzbeauty/
 
 ---
 
-## 🚀 Deployment to InfinityFree Hosting
+## Deployment to InfinityFree Hosting
 
 ### Step 1: Create InfinityFree Account
 1. Sign up at [infinityfree.com](https://infinityfree.com)
@@ -94,26 +100,21 @@ define('SITE_URL', 'https://annyzbeauty.rf.gd'); // your InfinityFree domain
    - Upload **all files and folders** into `/htdocs/` (not inside a subdirectory)
 
 ### Automatic Deploys (GitHub Actions)
-`.github/workflows/deploy-infinityfree.yml` uploads the site to `/htdocs/` on every push to `main`
-(or run it by hand from the **Actions** tab). Add these in GitHub → **Settings → Secrets and variables → Actions**:
+`.github/workflows/deploy-infinityfree.yml` uploads the site to `/annyzbeauty.co.ke/htdocs/` (the folder
+InfinityFree serves for the custom domain) on every push to `main`, or by hand from the **Actions** tab.
+Add these in GitHub → **Settings → Secrets and variables → Actions**:
 
-| Secret         | Value (from VistaPanel → FTP Details) |
-|----------------|---------------------------------------|
-| `FTP_SERVER`   | e.g. `ftpupload.net`                  |
-| `FTP_USERNAME` | e.g. `epiz_12345678`                  |
-| `FTP_PASSWORD` | your FTP / hosting account password   |
+| Secret                | Value                                                    |
+|-----------------------|----------------------------------------------------------|
+| `FTP_SERVER`          | from VistaPanel → FTP Details, e.g. `ftpupload.net`      |
+| `FTP_USERNAME`        | e.g. `if0_12345678`                                      |
+| `FTP_PASSWORD`        | your FTP / hosting account password                      |
+| `PAYSTACK_SECRET_KEY` | Paystack Dashboard → Settings → API Keys (`sk_live_...`) |
 
-The deploy also fills in `includes/config.php` from these secrets, so you don't edit it on the server:
-
-| Secret     | Value                                                      |
-|------------|------------------------------------------------------------|
-| `DB_HOST`  | MySQL hostname from VistaPanel, e.g. `sql200.infinityfree.com` |
-| `DB_USER`  | MySQL username, e.g. `if0_12345678`                        |
-| `DB_PASS`  | MySQL password                                             |
-| `DB_NAME`  | full database name, e.g. `if0_12345678_annyzbeauty`        |
-| `SITE_URL` | live address, e.g. `https://annyzbeauty.co.ke`             |
-
-The deploy stops before uploading anything if one of these is missing.
+`includes/config.php` is never uploaded: the live copy on the server keeps the database settings, so edit
+it there (Step 3). Without `PAYSTACK_SECRET_KEY` the site still deploys but Paystack payments are off
+(customers see a friendly message); after adding the secret, re-run the workflow from the **Actions** tab.
+A malformed key stops the deploy before anything is uploaded.
 
 ### Step 5: Create the Products Upload Folder
 After uploading, ensure `/htdocs/assets/images/products/` exists and is **writable**.
@@ -125,18 +126,18 @@ In FileZilla: right-click the folder → File Permissions → set to `755`.
 
 ---
 
-## 🔑 Default Login Credentials
+## Default Login Credentials
 
 | Role     | Email                      | Password      |
 |----------|----------------------------|---------------|
 | Admin    | admin@annyzbeauty.com      | Admin@1234    |
 | Customer | jane@example.com           | Admin@1234    |
 
-**⚠️ Change all passwords immediately after first login!**
+**Change all passwords immediately after first login!**
 
 ---
 
-## 🎨 Branding Colors
+## Branding Colors
 
 | Name         | Hex       |
 |--------------|-----------|
@@ -148,34 +149,38 @@ In FileZilla: right-click the folder → File Permissions → set to `755`.
 
 ---
 
-## 💳 Payment Setup
+## Payment Setup
 
-The site uses a **manual payment confirmation** system:
+Payments go through **Paystack** only (customers pay with M-Pesa or card on Paystack's page):
 
-1. Customer selects M-Pesa, PayPal, or Cash on Delivery at checkout
-2. Order is placed with status **Pending / Unpaid**
-3. Admin receives order notification (check `/admin/orders.php`)
-4. Share payment details with customer via email/WhatsApp:
-   - **M-Pesa:** Send to `+254 758 556 523` (Paybill/Till)
-   - **PayPal:** `masilavincent32@gmail.com`
-5. Customer pays and sends proof via WhatsApp
-6. Admin updates order status to **Processing** and payment to **Paid**
+1. The customer checks out; the order is saved as **Pending / Unpaid**.
+2. They are sent to Paystack to pay (`paystack_pay.php`).
+3. Paystack returns them to `paystack_callback.php`, which confirms the payment with Paystack's API
+   (amount, currency and reference must match) and marks the order **Paid / Processing**.
+4. Unpaid orders show a **Pay with Paystack** button on *My Orders* and on the profile page, so customers can retry.
 
----
+The Paystack secret key comes from the `PAYSTACK_SECRET_KEY` repository secret; the deploy writes it to
+`includes/paystack_secret.php` on the server. It is never committed. The first checkout updates the `orders`
+table automatically (adds `payment_reference` and `paid_at`).
 
-## 🛡️ Security Features
-
-- ✅ `password_hash()` with BCRYPT for all passwords
-- ✅ PDO prepared statements (SQL injection prevention)
-- ✅ `htmlspecialchars()` on all output (XSS prevention)
-- ✅ Session-based authentication with role separation
-- ✅ `.htaccess` blocks direct access to `/includes/` and `/database/`
-- ✅ File type validation for image uploads
-- ✅ Admin area completely separate from customer area
+Customers who don't want an account can order on **WhatsApp** (+254 708 433 754) from the floating button,
+the product page, or the login and register pages. Send them a Paystack payment link from your Paystack dashboard.
 
 ---
 
-## 📦 Adding Product Images
+## Security Features
+
+- `password_hash()` with BCRYPT for all passwords
+- PDO prepared statements (SQL injection prevention)
+- `htmlspecialchars()` on all output (XSS prevention)
+- Session-based authentication with role separation
+- `.htaccess` blocks direct access to `/includes/` and `/database/`
+- File type validation for image uploads
+- Admin area completely separate from customer area
+
+---
+
+## Adding Product Images
 
 Upload your product images to:  
 `/assets/images/products/`
@@ -188,7 +193,7 @@ You can also upload images directly through the admin panel:
 
 ---
 
-## ⚙️ Customization Tips
+## Customization Tips
 
 - **Shop name:** Change `SITE_NAME` in `includes/config.php`
 - **Currency:** Change `CURRENCY_SYMBOL` in `includes/config.php`
@@ -199,7 +204,7 @@ You can also upload images directly through the admin panel:
 
 ---
 
-## 📞 Support
+## Support
 
 Built for **Annyzbeauty** · Nairobi, Kenya  
 WhatsApp: +254 758 556 523  

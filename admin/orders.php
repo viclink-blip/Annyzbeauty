@@ -97,6 +97,12 @@ $orders = $orders->fetchAll();
                 <p class="mb-0" style="font-size:13px;"><strong>Ship to:</strong><br>
                 <?= sanitize($order['shipping_address']) ?><br>
                 <?= sanitize($order['shipping_city']) ?>, <?= sanitize($order['shipping_country']) ?></p>
+                <hr style="border-color:var(--border);">
+                <p class="mb-0" style="font-size:13px;"><strong>Payment:</strong>
+                <?= sanitize(ucwords(str_replace('_', ' ', $order['payment_method'] ?? ''))) ?>
+                <?php if (!empty($order['payment_reference'])): ?>
+                <br>Paystack ref: <code><?= sanitize($order['payment_reference']) ?></code>
+                <?php endif; ?></p>
             </div>
         </div>
 

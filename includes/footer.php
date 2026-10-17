@@ -4,7 +4,7 @@
         <div class="container">
             <div class="row g-4">
                 <!-- Brand -->
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <div class="d-flex align-items-center gap-2 mb-3">
                         <div class="brand-icon brand-icon-sm"><i class="bi bi-flower1"></i></div>
                         <span class="fw-bold fs-5 text-white">Annyz<span class="brand-accent-light">beauty</span></span>
@@ -14,7 +14,7 @@
                         <a href="#" class="social-btn"><i class="bi bi-instagram"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="social-btn"><i class="bi bi-tiktok"></i></a>
-                        <a href="https://wa.me/254758556523" class="social-btn"><i class="bi bi-whatsapp"></i></a>
+                        <a href="<?= whatsappLink() ?>" class="social-btn" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i></a>
                     </div>
                 </div>
 
@@ -27,6 +27,7 @@
                         <li><a href="<?= SITE_URL ?>/products.php?featured=1">Featured</a></li>
                         <li><a href="<?= SITE_URL ?>/cart.php">My Cart</a></li>
                         <li><a href="<?= SITE_URL ?>/orders.php">My Orders</a></li>
+                        <li><a href="<?= SITE_URL ?>/register.php">Create Account</a></li>
                     </ul>
                 </div>
 
@@ -44,20 +45,29 @@
                     </ul>
                 </div>
 
+                <!-- Policies -->
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="footer-heading">Policies</h6>
+                    <ul class="footer-links">
+                        <li><a href="<?= SITE_URL ?>/terms.php">Terms &amp; Conditions</a></li>
+                        <li><a href="<?= SITE_URL ?>/privacy.php">Privacy Policy</a></li>
+                        <li><a href="<?= SITE_URL ?>/returns.php">Returns &amp; Refunds</a></li>
+                        <li><a href="<?= SITE_URL ?>/shipping.php">Shipping &amp; Delivery</a></li>
+                    </ul>
+                </div>
+
                 <!-- Contact -->
-                <div class="col-lg-4 col-md-6">
+                <div class="col-lg-3 col-md-6">
                     <h6 class="footer-heading">Contact Us</h6>
                     <ul class="footer-contact">
                         <li><i class="bi bi-geo-alt-fill"></i> Nairobi, Kenya</li>
-                        <li><i class="bi bi-telephone-fill"></i> +254 758 556 523</li>
-                        <li><i class="bi bi-envelope-fill"></i> hello@annyzbeauty.com</li>
-                        <li><i class="bi bi-clock-fill"></i> Mon–Sat: 8am – 8pm</li>
+                        <li><i class="bi bi-whatsapp"></i> <?= WHATSAPP_DISPLAY ?></li>
+                        <li><i class="bi bi-envelope-fill"></i> masilavincent32@gmail.com</li>
+                        <li><i class="bi bi-clock-fill"></i> Mon–Sat: 8am – 6pm</li>
                     </ul>
                     <!-- Payment Methods -->
                     <div class="payment-badges mt-3">
-                        <span class="payment-badge"><i class="bi bi-phone-fill"></i> M-Pesa</span>
-                        <span class="payment-badge"><i class="bi bi-paypal"></i> PayPal</span>
-                        <span class="payment-badge"><i class="bi bi-cash-stack"></i> COD</span>
+                        <span class="payment-badge"><i class="bi bi-shield-lock-fill"></i> Secure payments by Paystack</span>
                     </div>
                 </div>
             </div>
@@ -73,6 +83,15 @@
         </div>
     </div>
 </footer>
+
+<!-- Floating WhatsApp order button -->
+<a href="<?= sanitize(whatsappLink('Hi Annyzbeauty, I would like to place an order.')) ?>"
+   target="_blank" rel="noopener" aria-label="Order on WhatsApp"
+   style="position:fixed;right:18px;bottom:18px;z-index:1050;width:56px;height:56px;border-radius:50%;
+          background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;
+          font-size:28px;box-shadow:0 6px 20px rgba(37,211,102,0.45);text-decoration:none;">
+    <i class="bi bi-whatsapp"></i>
+</a>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

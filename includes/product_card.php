@@ -1,14 +1,16 @@
 <?php
 // $p = product row with cat_name
-$imgSrc = 'assets/images/products/' . ($p['image'] ?? 'placeholder.jpg');
+$imgSrc     = 'assets/images/products/' . ($p['image'] ?? 'placeholder.jpg');
 $placeholder = 'https://placehold.co/300x300/FFF0F7/E91E8C?text=' . urlencode($p['name']);
-$isSale = !empty($p['sale_price']) && $p['sale_price'] < $p['price'];
+$isSale      = !empty($p['sale_price']) && $p['sale_price'] < $p['price'];
 $displayPrice = $isSale ? $p['sale_price'] : $p['price'];
 ?>
 <div class="product-card h-100">
     <div class="product-image-wrap">
         <a href="product.php?id=<?= $p['id'] ?>">
-            <img src="<?= $imgSrc ?>" alt="<?= sanitize($p['name']) ?>" onerror="this.src='<?= $placeholder ?>'">
+            <img src="<?= $imgSrc ?>"
+                 alt="<?= sanitize($p['name']) ?>"
+                 onerror="this.src='<?= $placeholder ?>'">
         </a>
         <?php if ($p['is_featured']): ?>
         <span class="product-badge">Featured</span>
@@ -16,7 +18,8 @@ $displayPrice = $isSale ? $p['sale_price'] : $p['price'];
         <span class="product-badge sale">Sale</span>
         <?php endif; ?>
         <div class="product-actions">
-            <button class="btn-action primary btn-add-to-cart" data-product-id="<?= $p['id'] ?>">
+            <button class="btn-action primary btn-add-to-cart"
+                    data-product-id="<?= $p['id'] ?>">
                 <i class="bi bi-bag-plus me-1"></i> Add to Cart
             </button>
         </div>

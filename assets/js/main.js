@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    showToast('Added to cart! 🛍️', 'success');
+                    showToast('Added to cart!', 'success');
                     updateCartBadge(data.cart_count);
                 } else {
                     if (data.redirect) window.location.href = data.redirect;

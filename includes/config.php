@@ -52,7 +52,7 @@ function getDB(): PDO {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
         } catch (PDOException $e) {
             die('<div style="font-family:sans-serif;padding:40px;text-align:center;">
-                    <h2 style="color:#d63384;">⚠️ Database Connection Failed</h2>
+                    <h2 style="color:#d63384;">Database Connection Failed</h2>
                     <p>Please check your database credentials in <code>includes/config.php</code></p>
                     <small>' . htmlspecialchars($e->getMessage()) . '</small>
                  </div>');

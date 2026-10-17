@@ -101,14 +101,17 @@ CREATE TABLE IF NOT EXISTS orders (
     discount DECIMAL(10,2) DEFAULT 0.00,
     total DECIMAL(10,2) NOT NULL,
     status ENUM('pending','processing','shipped','delivered','cancelled','refunded') DEFAULT 'pending',
-    payment_method ENUM('mpesa','paypal','cash_on_delivery') DEFAULT 'mpesa',
+    payment_method VARCHAR(30) NOT NULL DEFAULT 'paystack',
     payment_status ENUM('unpaid','paid','refunded') DEFAULT 'unpaid',
+    payment_reference VARCHAR(100) NULL,
+    paid_at DATETIME NULL,
     shipping_address TEXT NOT NULL,
     shipping_city VARCHAR(100),
     shipping_country VARCHAR(100),
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_payment_reference (payment_reference),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -187,8 +190,8 @@ INSERT INTO users (first_name, last_name, email, phone, password, address, city,
 
 -- Sample orders
 INSERT INTO orders (order_number, user_id, subtotal, shipping_fee, total, status, payment_method, payment_status, shipping_address, shipping_city, shipping_country) VALUES
-('ANN-20260001', 1, 5950.00, 300.00, 6250.00, 'delivered', 'mpesa', 'paid', '123 Moi Avenue', 'Nairobi', 'Kenya'),
-('ANN-20260002', 2, 2800.00, 300.00, 3100.00, 'processing', 'mpesa', 'paid', '45 Tom Mboya St', 'Mombasa', 'Kenya');
+('ANN-20260001', 1, 5950.00, 300.00, 6250.00, 'delivered', 'paystack', 'paid', '123 Moi Avenue', 'Nairobi', 'Kenya'),
+('ANN-20260002', 2, 2800.00, 300.00, 3100.00, 'processing', 'paystack', 'paid', '45 Tom Mboya St', 'Mombasa', 'Kenya');
 
 INSERT INTO order_items (order_id, product_id, product_name, quantity, unit_price, total_price) VALUES
 (1, 1, 'Rose Glow Vitamin C Serum', 1, 2200.00, 2200.00),
