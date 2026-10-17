@@ -112,7 +112,9 @@ Add these in GitHub → **Settings → Secrets and variables → Actions**:
 | `PAYSTACK_SECRET_KEY` | Paystack Dashboard → Settings → API Keys (`sk_live_...`) |
 
 `includes/config.php` is never uploaded: the live copy on the server keeps the database settings, so edit
-it there (Step 3). The deploy stops before uploading if the Paystack key is missing or malformed.
+it there (Step 3). Without `PAYSTACK_SECRET_KEY` the site still deploys but Paystack payments are off
+(customers see a friendly message); after adding the secret, re-run the workflow from the **Actions** tab.
+A malformed key stops the deploy before anything is uploaded.
 
 ### Step 5: Create the Products Upload Folder
 After uploading, ensure `/htdocs/assets/images/products/` exists and is **writable**.

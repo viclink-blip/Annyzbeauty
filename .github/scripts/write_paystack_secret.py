@@ -11,7 +11,11 @@ PATH = "includes/paystack_secret.php"
 
 key = os.environ.get("PAYSTACK_SECRET_KEY", "").strip()
 if not key:
-    sys.exit("Missing repository secret: PAYSTACK_SECRET_KEY")
+    # Deploy the rest of the site anyway; checkout shows a friendly
+    # "payment unavailable" message until the key is added.
+    print("::warning::PAYSTACK_SECRET_KEY is not set, so Paystack payments are off. "
+          "Add the secret and re-run this workflow to turn them on.")
+    sys.exit(0)
 # Paystack secret keys look like sk_live_xxx or sk_test_xxx; checking the
 # shape also means the value is safe inside a PHP string.
 if not re.fullmatch(r"sk_(live|test)_[A-Za-z0-9]+", key):
