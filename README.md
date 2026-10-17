@@ -93,6 +93,19 @@ define('SITE_URL', 'https://annyzbeauty.rf.gd'); // your InfinityFree domain
 3. Upload the entire `annyzbeauty/` contents to `/htdocs/` on the server
    - Upload **all files and folders** into `/htdocs/` (not inside a subdirectory)
 
+### Automatic Deploys (GitHub Actions)
+`.github/workflows/deploy-infinityfree.yml` uploads the site to `/htdocs/` on every push to `main`
+(or run it by hand from the **Actions** tab). Add these in GitHub → **Settings → Secrets and variables → Actions**:
+
+| Secret         | Value (from VistaPanel → FTP Details) |
+|----------------|---------------------------------------|
+| `FTP_SERVER`   | e.g. `ftpupload.net`                  |
+| `FTP_USERNAME` | e.g. `epiz_12345678`                  |
+| `FTP_PASSWORD` | your FTP / hosting account password   |
+
+`includes/config.php`, `database/` and uploaded product images are never overwritten, so set up
+`config.php` on the server once (Step 3) and leave it there.
+
 ### Step 5: Create the Products Upload Folder
 After uploading, ensure `/htdocs/assets/images/products/` exists and is **writable**.
 In FileZilla: right-click the folder → File Permissions → set to `755`.
